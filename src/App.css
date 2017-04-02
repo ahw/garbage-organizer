@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#input {
+    width:50vw;
+    height:calc(100vh - 20px);
+    border:none;
+    padding:5px;
+    border:2px solid;
+    border-color:#d3d3d3;
+    border-radius:4px;
+    outline:none;
+    transition:500ms;
+    transition-property:border-color;
+    font-size:16px;
+    box-sizing:border-box;
+    margin:10px;
+}
+
+#input:focus {
+    border-color:black;
+    transition:500ms;
+    transition-property:border-color;
+}
