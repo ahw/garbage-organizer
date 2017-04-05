@@ -19,6 +19,8 @@ function isCurrencySymbol(ch) {
     return /\$/.test(ch);
 }
 
+const isComma = (ch) => /,/.test(ch);
+
 const transitions = {
     // Start
     [START]: [{
@@ -29,6 +31,10 @@ const transitions = {
         test: isLetter,
         nextState: LETTERS,
         acc: (chunks, ch) => [ch],
+    }, {
+        test: isComma,
+        nextState: COMMA,
+        acc: (chunks, ch) => [...chunks, ch],
     }],
 
     // Letters
@@ -40,6 +46,10 @@ const transitions = {
         test: isLetter,
         nextState: LETTERS,
         acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
+    }, {
+        test: isComma,
+        nextState: COMMA,
+        acc: (chunks, ch) => [...chunks, ch],
     }],
 
     // DIGITS
@@ -51,16 +61,40 @@ const transitions = {
         test: isLetter,
         nextState: LETTERS,
         acc: (chunks, ch) => [...chunks, ch],
+    }, {
+        test: isComma,
+        nextState: COMMA,
+        acc: (chunks, ch) => [...chunks, ch],
     }],
 
     [CURRENCY]: [{
+        test: isDigit,
+        nextState: DIGITS,
+        acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
+    }, {
+        test: isLetter,
+        nextState: LETTERS,
+        acc: (chunks, ch) => [...chunks, ch],
+    }, {
         test: isCurrencySymbol,
         nextState: CURRENCY,
+        acc: (chunks, ch) => [...chunks, ch],
+    }, {
+        test: isComma,
+        nextState: COMMA,
         acc: (chunks, ch) => [...chunks, ch],
     }],
 
     [COMMA]: [{
-        test: (ch) => /,/.test(ch),
+        test: isDigit,
+        nextState: DIGITS,
+        acc: (chunks, ch) => [...chunks, ch],
+    }, {
+        test: isLetter,
+        nextState: LETTERS,
+        acc: (chunks, ch) => [...chunks, ch],
+    }, {
+        test: isComma,
         nextState: COMMA,
         acc: (chunks, ch) => [...chunks, ch],
     }]
@@ -92,7 +126,6 @@ export default function tokenize(str) {
             };
         }, { state: START, acc: null });
 
-        console.log(`Finished line. Line chunks:`, chunks);
         console.log();
         return chunks;
     });
