@@ -1,8 +1,10 @@
 const LETTERS = 'LETTERS';
 const DIGITS = 'DIGITS';
-const DATE = 'DATE';
 const CURRENCY = 'CURRENCY';
+const COMMA = 'COMMA';
+const PERIOD = 'PERIOD';
 const WHITESPACE = 'WHITESPACE'; 
+const UNKNOWN = 'UNKNOWN';
 const START = 'START';
 
 function isLetter(ch) {
@@ -17,50 +19,49 @@ function isCurrencySymbol(ch) {
     return /\$/.test(ch);
 }
 
-const xtransitions = [{
-    fromState: LETTERS,
-    test: isDigit,
-    toState: DIGITS,
-    acc: (chunks, ch) => [...chunks, ch],
-}, {
-    fromState: LETTERS,
-    test: isLetter,
-    toState: LETTERS,
-    acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
-}, {
-}];
-
 const transitions = {
     // Start
     [START]: [{
         test: isDigit,
-        toState: DIGITS,
+        nextState: DIGITS,
         acc: (chunks, ch) => [ch],
     }, {
         test: isLetter,
-        toState: LETTERS,
+        nextState: LETTERS,
         acc: (chunks, ch) => [ch],
     }],
 
     // Letters
     [LETTERS]: [{
         test: isDigit,
-        toState: DIGITS,
+        nextState: DIGITS,
         acc: (chunks, ch) => [...chunks, ch],
     }, {
         test: isLetter,
-        toState: LETTERS,
+        nextState: LETTERS,
         acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
     }],
 
     // DIGITS
     [DIGITS]: [{
         test: isDigit,
-        toState: DIGITS,
+        nextState: DIGITS,
         acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
     }, {
         test: isLetter,
-        toState: LETTERS,
+        nextState: LETTERS,
+        acc: (chunks, ch) => [...chunks, ch],
+    }],
+
+    [CURRENCY]: [{
+        test: isCurrencySymbol,
+        nextState: CURRENCY,
+        acc: (chunks, ch) => [...chunks, ch],
+    }],
+
+    [COMMA]: [{
+        test: (ch) => /,/.test(ch),
+        nextState: COMMA,
         acc: (chunks, ch) => [...chunks, ch],
     }]
 }
@@ -69,19 +70,27 @@ const transitions = {
 export default function tokenize(str) {
     let currentState = START;
     const chunksByLine = str.split('\n').map(line => {
-        let chunks = [];
-        line.split('').forEach(ch => {
-            const transitionsForState = transitions[currentState];
+        const chunks = line.split('').reduce((prev, ch) => {
+            const transitionsForState = transitions[prev.state];
+            let transition = null;
             for (let i = 0; i < transitionsForState.length; i++) {
-                const transition = transitionsForState[i];
+                transition = transitionsForState[i];
                 if (transition.test(ch)) {
-                    // console.log(`Got char ${ch}. Transitioning from ${currentState} to ${transition.toState}`);
-                    currentState = transition.toState;
-                    chunks = transition.acc(chunks, ch);
                     break;
                 }
             }
-        });
+
+            console.groupCollapsed(`Character ${ch}`);
+            console.log(`OLD state ${prev.state}`);
+            console.log(`NEW state ${transition.nextState}`);
+            console.log(`Accumulator`, '', transition.acc(prev.acc, ch));
+            console.groupEnd();
+
+            return {
+                state: transition.nextState,
+                acc: transition.acc(prev.acc, ch),
+            };
+        }, { state: START, acc: null });
 
         console.log(`Finished line. Line chunks:`, chunks);
         console.log();
