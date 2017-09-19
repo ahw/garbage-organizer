@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import './App.css';
-import tokenize from './tokenizer';
+import tokenizer from 'string-tokenizer';
+tokenizer.token('digit', /\d+/);
 
 class App extends Component {
     onChange(e) {
-        tokenize(e.target.value);
+        tokenizer.input(e.target.value);
     }
 
     render() {
         return (<div>
-            <textarea id="input" onChange={this.onChange} />
+            <textarea id="input" onBlur={this.onChange} />
         </div>);
     }
 }
