@@ -1,4 +1,4 @@
-const numberRegex = /(\d*\.?\d+)/g;
+const numberRegex = /(-?\d*\.?\d+)/g;
 export function splitToRows(str) {
     return str.split('\n');
 }
