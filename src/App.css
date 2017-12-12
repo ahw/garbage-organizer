@@ -32,10 +32,12 @@ body {
 }
 
 .summation {
-    background: #9AFDFC;
+    color: #4800FF;
+    border: 1px solid #4800FF;
     font-size: 16px;
     display:inline-block;
     padding-top: 1px;
+    padding: 2px;
 }
 
 .summation.row {
