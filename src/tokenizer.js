@@ -1,5 +1,5 @@
-const LETTERS = 'LETTERS';
-const DIGITS = 'DIGITS';
+const LETTER = 'LETTER';
+const DIGIT = 'DIGIT';
 const CURRENCY = 'CURRENCY';
 const COMMA = 'COMMA';
 const PERIOD = 'PERIOD';
@@ -25,11 +25,11 @@ const transitions = {
     // Start
     [START]: [{
         test: isDigit,
-        nextState: DIGITS,
+        nextState: DIGIT,
         acc: (chunks, ch) => [ch],
     }, {
         test: isLetter,
-        nextState: LETTERS,
+        nextState: LETTER,
         acc: (chunks, ch) => [ch],
     }, {
         test: isComma,
@@ -37,14 +37,14 @@ const transitions = {
         acc: (chunks, ch) => [...chunks, ch],
     }],
 
-    // Letters
-    [LETTERS]: [{
+    // LETTER
+    [LETTER]: [{
         test: isDigit,
-        nextState: DIGITS,
+        nextState: DIGIT,
         acc: (chunks, ch) => [...chunks, ch],
     }, {
         test: isLetter,
-        nextState: LETTERS,
+        nextState: LETTER,
         acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
     }, {
         test: isComma,
@@ -52,14 +52,14 @@ const transitions = {
         acc: (chunks, ch) => [...chunks, ch],
     }],
 
-    // DIGITS
-    [DIGITS]: [{
+    // DIGIT
+    [DIGIT]: [{
         test: isDigit,
-        nextState: DIGITS,
+        nextState: DIGIT,
         acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
     }, {
         test: isLetter,
-        nextState: LETTERS,
+        nextState: LETTER,
         acc: (chunks, ch) => [...chunks, ch],
     }, {
         test: isComma,
@@ -69,11 +69,11 @@ const transitions = {
 
     [CURRENCY]: [{
         test: isDigit,
-        nextState: DIGITS,
+        nextState: DIGIT,
         acc: (chunks, ch) => [...chunks.slice(0, -1), chunks.slice(-1) + ch],
     }, {
         test: isLetter,
-        nextState: LETTERS,
+        nextState: LETTER,
         acc: (chunks, ch) => [...chunks, ch],
     }, {
         test: isCurrencySymbol,
@@ -87,11 +87,11 @@ const transitions = {
 
     [COMMA]: [{
         test: isDigit,
-        nextState: DIGITS,
+        nextState: DIGIT,
         acc: (chunks, ch) => [...chunks, ch],
     }, {
         test: isLetter,
-        nextState: LETTERS,
+        nextState: LETTER,
         acc: (chunks, ch) => [...chunks, ch],
     }, {
         test: isComma,
