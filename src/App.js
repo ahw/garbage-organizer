@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import currency from 'currency.js';
 import './App.css';
 import { splitToRows, splitToColumns } from './splitter';
 
@@ -30,11 +31,11 @@ class App extends Component {
 
         // Reduce 'em
         const rowSummations = rows.filter(row => row.length).map(arr => {
-            return arr.map(n => parseFloat(n)).reduce((prev, curr) => prev + curr)
+            return arr.reduce((acc, curr) => currency(acc).add(curr), 0).value;
         });
 
         const colSummations = cols.filter(col => col.length).map(arr => {
-            return arr.map(n => parseFloat(n)).reduce((prev, curr) => prev + curr)
+            return arr.reduce((acc, curr) => currency(acc).add(curr), 0).value;
         });
 
         this.setState({
