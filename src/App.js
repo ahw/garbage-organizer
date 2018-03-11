@@ -9,6 +9,7 @@ class App extends Component {
         this.state = {
             rowSummations: [],
             colSummations: [],
+            editing: false,
         };
     }
 
@@ -16,7 +17,6 @@ class App extends Component {
         const text = e.target.value;
         const rows = splitToRows(text).map(splitToColumns);
         const cols = [];
-        const maxCols = rows.reduce((prev, row) => Math.max(row.length, prev), 0);
         console.log('Data matrix', rows);
         for (let i = 0; i < rows.length; i++) {
             for (let j = 0; j < rows[i].length; j++) {
@@ -55,8 +55,8 @@ class App extends Component {
         return (
             <div>
                 <div className="horizontal">
-                    <textarea id="input" onBlur={this.onChange.bind(this)} />
-                    <div>{rowSums}</div>
+                    <textarea id="input" onChange={this.onChange.bind(this)} />
+                    <div className="summationContainer">{rowSums}</div>
                 </div>
                 <div>{colSums}</div>
         </div>);
