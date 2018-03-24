@@ -1,12 +1,17 @@
 import currency from 'currency.js';
 
 const numberRegex = /(\S*\d+\S*)/g;
+const tabRegex = /\t/g;
 export function splitToRows(str) {
     return str.split('\n');
 }
 
 export function splitToColumns(line) {
-    return line.split(numberRegex).filter(chunk => numberRegex.test(chunk));
+    if (tabRegex.test(line)) {
+        return line.split(tabRegex);
+    } else {
+        return line.split(numberRegex).filter(chunk => numberRegex.test(chunk));
+    }
 }
 
 export function parse(rawText) {
@@ -57,8 +62,8 @@ export function parse(rawText) {
             }
 
             if (i < rows.length && j < maxCols) {
-                // Normal
-                const value = typeof cols[j][i] !== 'undefined' ? cols[j][i] : 'N/A';
+                // Normal cell
+                const value = typeof cols[j][i] !== 'undefined' && cols[j][i] !== "" ? cols[j][i] : 'N/A';
                 data[i].push(value);
             } else if (i < rows.length && j === maxCols) {
                 // Last column
@@ -67,13 +72,11 @@ export function parse(rawText) {
                 // Last row
                 data[i].push(colSummations[j]);
             } else {
+                // Last row and last columns
                 data[i].push('LAST');
             }
         }
     }
-
-    console.log('parse data', data);
-
 
     return {
         rows,
