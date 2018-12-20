@@ -14,6 +14,14 @@ export function splitToColumns(line) {
     }
 }
 
+export function inferDataType(str) {
+    const currencyRegex = /^\s*\$\d+\.?\d*$/; // Use this to infer the data type of a column and adjust text-align accordingly
+    const isInt = isNaN(parseInt(str)) === false;
+    const isFloat = isNaN(parseFloat(str)) === false;
+    const isCurrency = currencyRegex.test(str);
+    // console.log(`"${str}" isInt=${isInt} isFloat=${isFloat} isCurrency=${isCurrency}`);
+}
+
 export function parse(rawText) {
     const rows = splitToRows(rawText).map(splitToColumns);
     const cols = [];
@@ -50,28 +58,33 @@ export function parse(rawText) {
     //  [ 1000,  1000,  1000,  "LAST" ] <--- colSummations
     // ]
     const data = [];
+    const columnDataTypes = [];
+    const rowDataTypes = [];
     for (let i = 0; i <= rows.length; i++) {
         for (let j = 0; j <= maxCols; j++) {
+            let value = 'N/A';
             if (typeof data[i] === 'undefined') {
                 data[i] = [];
             }
 
             if (i < rows.length && j < maxCols) {
                 // Normal cell
-                const value = typeof cols[j][i] !== 'undefined' && cols[j][i] !== ""
-                    ? cols[j][i] // If not undefined and not empty, use the value as-is
-                    : 'N/A'; // Else, push a special 'N/A' sentinal value
-                data[i].push(value);
+                if (typeof cols[j][i] !== 'undefined' && cols[j][i] !== "") {
+                    value = cols[j][i];
+                }
             } else if (i < rows.length && j === maxCols) {
                 // Last column
-                data[i].push(rowSummations[i]);
+                value = rowSummations[i];
             } else if (i === rows.length && j < maxCols) {
                 // Last row
-                data[i].push(colSummations[j]);
+                value = colSummations[j];
             } else {
                 // Last row and last columns
-                data[i].push('LAST');
+                value = 'LAST';
             }
+
+            inferDataType(value);
+            data[i].push(value);
         }
     }
 
