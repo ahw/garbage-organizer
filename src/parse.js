@@ -1,7 +1,7 @@
 import currency from 'currency.js';
 
-const numberRegex = /(\S*\d+\S*)/g;
-const columnSeparatorRegex = /\t/g;
+const numberRegex = /(\S*\d+\S*)/;
+const columnSeparatorRegex = /\t/;
 export function splitToRows(str) {
     return str.split('\n');
 }
