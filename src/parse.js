@@ -39,20 +39,15 @@ export function parse(rawText) {
         return arr.reduce((acc, curr) => currency(acc).add(curr), 0).value;
     });
 
-    // [
-    //  [ 123,    45,  456,  10000 ],
-    //  [ 123,    45,  456,  10000 ],
-    //  [ 123,    45,  456,  10000 ],
-    //  [ 1000, 1000, 1000,   2000 ]
-    // ]
+    // What we're aiming for:
     //
     //                          +----- rowSummations
     //                          |
     // [                        V
-    //  [ 123,  undef, undef,  10000 ],
-    //  [ 123,     45,   456,  10000 ],
-    //  [ 123,     45,   456,  10000 ],
-    //  [ 1000,  1000,  1000 ] <--- colSummations
+    //  [ 123,  undef, undef,  10000  ],
+    //  [ 123,     45,   456,  10000  ],
+    //  [ 123,     45,   456,  10000  ],
+    //  [ 1000,  1000,  1000,  "LAST" ] <--- colSummations
     // ]
     const data = [];
     for (let i = 0; i <= rows.length; i++) {
@@ -63,7 +58,9 @@ export function parse(rawText) {
 
             if (i < rows.length && j < maxCols) {
                 // Normal cell
-                const value = typeof cols[j][i] !== 'undefined' && cols[j][i] !== "" ? cols[j][i] : 'N/A';
+                const value = typeof cols[j][i] !== 'undefined' && cols[j][i] !== ""
+                    ? cols[j][i] // If not undefined and not empty, use the value as-is
+                    : 'N/A'; // Else, push a special 'N/A' sentinal value
                 data[i].push(value);
             } else if (i < rows.length && j === maxCols) {
                 // Last column
