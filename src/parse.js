@@ -1,14 +1,14 @@
 import currency from 'currency.js';
 
 const numberRegex = /(\S*\d+\S*)/g;
-const tabRegex = /\t/g;
+const columnSeparatorRegex = /\t/g;
 export function splitToRows(str) {
     return str.split('\n');
 }
 
 export function splitToColumns(line) {
-    if (tabRegex.test(line)) {
-        return line.split(tabRegex);
+    if (columnSeparatorRegex.test(line)) {
+        return line.split(columnSeparatorRegex);
     } else {
         return line.split(numberRegex).filter(chunk => numberRegex.test(chunk));
     }
