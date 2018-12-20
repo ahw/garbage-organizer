@@ -1,4 +1,5 @@
 import currency from 'currency.js';
+import DataMatrix from './DataMatrix';
 
 const numberRegex = /(\S*\d+\S*)/;
 const columnSeparatorRegex = /\t/;
@@ -14,12 +15,30 @@ export function splitToColumns(line) {
     }
 }
 
-export function inferDataType(str) {
+export function cleanValue(str) {
     const currencyRegex = /^\s*\$\d+\.?\d*$/; // Use this to infer the data type of a column and adjust text-align accordingly
     const isInt = isNaN(parseInt(str)) === false;
     const isFloat = isNaN(parseFloat(str)) === false;
     const isCurrency = currencyRegex.test(str);
-    // console.log(`"${str}" isInt=${isInt} isFloat=${isFloat} isCurrency=${isCurrency}`);
+    let type = 'string';
+    let value = null;
+
+    if (isCurrency) {
+        type = 'currency';
+        value = currency(str).value;
+    } else if (isFloat) {
+        type = 'float';
+        value = currency(str).value;
+    } else if (isInt) {
+        type = 'int';
+        value = currency(str).value;
+    } else {
+        type = 'string';
+        value = str;
+    }
+
+    console.log(`"${str} inferred data type is ${type}`);
+    return { type, value };
 }
 
 export function parse(rawText) {
@@ -58,8 +77,9 @@ export function parse(rawText) {
     //  [ 1000,  1000,  1000,  "LAST" ] <--- colSummations
     // ]
     const data = [];
-    const columnDataTypes = [];
-    const rowDataTypes = [];
+    const columnDataTypes = new DataMatrix();
+    const rowDataTypes = new DataMatrix();
+    const datatypes = new DataMatrix();
     for (let i = 0; i <= rows.length; i++) {
         for (let j = 0; j <= maxCols; j++) {
             let value = 'N/A';
@@ -83,8 +103,9 @@ export function parse(rawText) {
                 value = 'LAST';
             }
 
-            inferDataType(value);
-            data[i].push(value);
+            const { type, value: cleanedValue } = cleanValue(value);
+            datatypes.set(i, j, type);
+            data[i].push(cleanedValue);
         }
     }
 
