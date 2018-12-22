@@ -1,62 +1,32 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import './App.css';
-import { parse } from './parse';
 import SummaryTable from './SummaryTable';
+import EditTable from './EditTable';
+
+function mapStateToProps(state, ownProps) {
+    return {
+        mode: state.mode,
+    };
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+    return {};
+}
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            rowSummations: [],
-            colSummations: [],
-            editMode: true,
-        };
-    }
-
-    onBlur(e) {
-        this.setState({ editMode: false });
-    }
-
-    onChange(e) {
-        const text = e.target.value;
-        const { data, rowSummations, colSummations } = parse(text);
-
-        this.setState({
-            rowSummations,
-            colSummations,
-            data,
-            text,
-        });
-    }
 
     render() {
-        if (this.state.editMode) {
-            const rowSums = this.state.rowSummations.map((rowSum, i) => {
-                return <span className="row summation" key={i}>{rowSum}</span>
-            });
-            const colSums = this.state.colSummations.map((colSum, i) => {
-                return <span className="col summation" key={i}>{colSum}</span>
-            });
-
+        console.log('app render', this.props);
+        if (this.props.mode === 'edit') {
             return (
-                <div>
-                    <div className="horizontal">
-                        <textarea
-                            id="input"
-                            autoFocus
-                            onChange={this.onChange.bind(this)}
-                            value={this.state.text}
-                            onBlur={() => this.setState({ editMode: false })}
-                        />
-                        <div className="summationContainer">{rowSums}</div>
-                    </div>
-                    <div>{colSums}</div>
-                </div>
+                <EditTable />
             );
         } else {
             return (
                 <SummaryTable
-                    data={this.state.data}
+                    data={[]}
                     enterEditMode={() => this.setState({ editMode: true })}
                 />
             );
@@ -64,4 +34,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);

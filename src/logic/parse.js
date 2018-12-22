@@ -1,5 +1,5 @@
 import currency from 'currency.js';
-import DataMatrix from './DataMatrix';
+import DataMatrix from '../DataMatrix';
 
 const numberRegex = /(\S*\d+\S*)/;
 const columnSeparatorRegex = /\t/;
@@ -17,7 +17,7 @@ export function splitToColumns(line) {
 
 export function cleanValue(str) {
     const currencyRegex = /^\s*\$\d+\.?\d*$/; // Use this to infer the data type of a column and adjust text-align accordingly
-    const isInt = isNaN(parseInt(str)) === false;
+    const isInt = isNaN(parseInt(str, 10)) === false;
     const isFloat = isNaN(parseFloat(str)) === false;
     const isCurrency = currencyRegex.test(str);
     let type = 'string';
@@ -77,8 +77,8 @@ export function parse(rawText) {
     //  [ 1000,  1000,  1000,  "LAST" ] <--- colSummations
     // ]
     const data = [];
-    const columnDataTypes = new DataMatrix();
-    const rowDataTypes = new DataMatrix();
+    // const columnDataTypes = new DataMatrix();
+    // const rowDataTypes = new DataMatrix();
     const datatypes = new DataMatrix();
     for (let i = 0; i <= rows.length; i++) {
         for (let j = 0; j <= maxCols; j++) {
