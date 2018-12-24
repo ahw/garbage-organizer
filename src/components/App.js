@@ -25,10 +25,7 @@ class App extends Component {
             );
         } else {
             return (
-                <SummaryTable
-                    data={[]}
-                    enterEditMode={() => this.setState({ editMode: true })}
-                />
+                <SummaryTable />
             );
         }
     }

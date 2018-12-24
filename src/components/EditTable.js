@@ -9,13 +9,14 @@ function mapStateToProps(state, ownProps) {
     return {
         rawInput: state.rawInput,
         derivedData: state.derivedData,
+        summaryTableWidth: state.summaryTableWidth,
     };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
     return {
         onChange: (e) => dispatch(updateRawInput(e.target.value)),
-        changeMode,
+        changeMode: (mode) => dispatch(changeMode(mode)),
     };
 }
 
@@ -29,14 +30,14 @@ function EditTable(props) {
     });
 
     return (
-        <div>
+        <div style={{width: props.summaryTableWidth || 'auto'}}>
             <div className="horizontal">
                 <textarea
                     id="input"
                     autoFocus
                     onChange={props.onChange}
                     value={props.rawInput}
-                    onBlur={() => changeMode('view')}
+                    onDoubleClick={() => props.changeMode('view')}
                 />
                 <div className="summationContainer">{rowSums}</div>
             </div>

@@ -3,6 +3,7 @@ import {
     SET_HAS_HEADER,
     CHANGE_MODE,
     UPDATE_RAW_INPUT,
+    UPDATE_SUMMARY_TABLE_WIDTH,
 } from '../actionTypes';
 import { parse } from '../../logic/parse';
 
@@ -58,11 +59,21 @@ function derivedData(state = initialState.derivedData, action) {
     }
 }
 
+function summaryTableWidth(state = initialState.summaryTableWidth, action) {
+    if (action.type !== UPDATE_SUMMARY_TABLE_WIDTH) {
+        return state;
+    }
+
+    const width = parseInt(action.payload.summaryTableWidth, 10);
+    return isNaN(width) ? 'auto' : width;
+}
+
 
 export default combineReducers({
     hasHeader,
     mode,
     rawInput,
     derivedData,
+    summaryTableWidth,
 });
 
