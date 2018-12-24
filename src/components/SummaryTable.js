@@ -11,7 +11,8 @@ export default class SummaryTable extends Component {
         setTimeout(() => {
             const table = this.tableRef.current;
             const style = window.getComputedStyle(table);
-            style.width;
+            const width = style.width.match(/(\d+\.?\d*)px/)[1];
+            console.log(`width is ${width} pixels`);
         }, 100);
     }
 

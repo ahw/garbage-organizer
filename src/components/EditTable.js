@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
     updateRawInput,
     changeMode,
-} from './redux/actions';
+} from '../redux/actions';
 
 function mapStateToProps(state, ownProps) {
     return {
